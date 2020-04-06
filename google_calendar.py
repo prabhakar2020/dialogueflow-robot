@@ -64,8 +64,12 @@ def main(today = False):
                 print(str(start).replace('T',' ').split(":00+")[0], "-->",event['summary'])
                 calendar_entries.append(str(str(start).replace('T',' ').split(":00+")[0]+ "-->"+event['summary']))
         return 'I found total '+str(len(calendar_entries)) +' meetings today. '+ '. and '.join(calendar_entries)
-    except Exception as err:
-        return str(err)
+    except Exception as e:
+        import sys,os
+        exc_type, exc_obj, exc_tb = sys.exc_info()
+        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        print(exc_type, fname, exc_tb.tb_lineno)
+        return str(e)
 
 
 
