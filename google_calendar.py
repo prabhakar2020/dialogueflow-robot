@@ -5,6 +5,7 @@ import os.path
 from googleapiclient.discovery import build
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
+import traceback
 
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
@@ -65,11 +66,12 @@ def main(today = False):
                 calendar_entries.append(str(str(start).replace('T',' ').split(":00+")[0]+ "-->"+event['summary']))
         return 'I found total '+str(len(calendar_entries)) +' meetings today. '+ '. and '.join(calendar_entries)
     except Exception as e:
-        import sys,os
-        exc_type, exc_obj, exc_tb = sys.exc_info()
-        fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
-        print(exc_type, fname, exc_tb.tb_lineno)
-        return str(e)
+        # import sys,os
+        # exc_type, exc_obj, exc_tb = sys.exc_info()
+        # fname = os.path.split(exc_tb.tb_frame.f_code.co_filename)[1]
+        # print(exc_type, fname, exc_tb.tb_lineno)
+        return traceback.format_exc()
+        # return str(e)
 
 
 
