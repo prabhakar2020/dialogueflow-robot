@@ -1,2 +1,1 @@
-# dialogueflow-robot
-Flask application for Dialogueflow Robot
+# Flask demo project Heroko deployment
