@@ -64,7 +64,8 @@ def processRequest(req):
         "play_video": ["play video","play vid","play the video","play the vid","some video","a video","the video"],
         "stop_video": ["stop video","stop vid","stop the video","stop the v", "stop a v","stop some v", "close the video","close a video","close a v","close the v"],
         "open_jira": ["open jira","open jeera","open dera","open jila","open zera","open zara","open jara","open genetic code","open gira","open genetic","open zehra","open jehra","open dear","open my ticket",'open issue','open tissue','open defect','open defeat','open repeat','open differenc','open defense'],
-        "mail": ['open mail', 'opal mail', 'open male', 'opal male', 'open made', 'opal made','open my mail', 'opal my mail', 'open my male', 'opal my male', 'open my made', 'opal my made']
+        "mail": ['open mail', 'opal mail', 'open male', 'opal male', 'open made', 'opal made','open my mail', 'opal my mail', 'open my male', 'opal my male', 'open my made', 'opal my made'],
+        "calendar": ["calendar","kalandar"]
         }
 
     responses = {
@@ -78,7 +79,8 @@ def processRequest(req):
         "play_video": "<<respect>>, Let me play video for you",
         "stop_video": "Okay, I have placed a request for stoping the video",
         "open_jira": "Okay <<respect>>, I am opening JIRA on browser. Do you need anything else?",
-        "mail": "fine <<respect>>, I am opening your mailbox on browser. Please check it"
+        "mail": "fine <<respect>>, I am opening your mailbox on browser. Please check it",
+        "calendar": "<<respect>>, <<calendar>>"
         }
 
 
@@ -100,11 +102,16 @@ def processRequest(req):
                     insert_data("stop","stop")
                 if str(entity) == "mail":
                     insert_data("mail","mail")
+                
                 speech = responses.get(str(entity),"ok").replace("<<respect>>",str(get_respect()).title())
 
                 if str(entity) == "open_jira":
                     insert_data("open_jira","open_jira")
-                    speech = responses.get(str(entity),"ok").replace("<<respect>>",str(get_respect()).title())
+                    speech = responses.get(str(entity),"ok")
+                if str(entity) == "calendar":
+                    import google_calendar    
+                    calendars = google_calendar.main(True)
+                    speech = responses.get(str(entity),"ok").replace("<<calendar>>",str(calendars))
                 break
 
 
@@ -112,7 +119,7 @@ def processRequest(req):
     # parameters = query_response.get('parameters',None)
     # res = get_data()
     return {
-        "fulfillmentText": speech
+        "fulfillmentText": str(speech).replace("<<respect>>",str(get_respect()).title())
         }
 
 def get_data():

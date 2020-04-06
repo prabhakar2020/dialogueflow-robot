@@ -48,23 +48,19 @@ def main(today = False):
 
     if not events:
         print('No upcoming events found.')
+        return "No upcoming events found."
+    calendar_entries = []
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         # print (str(start).split('T')[0],datetime.datetime.now().strftime("%Y-%m-%d"))
         if today:
             if str(start).split('T')[0] == str(datetime.datetime.now().strftime("%Y-%m-%d")):
-                print (str(start).replace('T',' ').split(":00+")[0], "-->",event['summary'])
+                event_at = ':'.join(str(start).split('T')[1].split(":")[:2])
+                calendar_entries.append(str(event['summary']).replace(":"," ")+" at "+str(event_at))
         else:
             print(str(start).replace('T',' ').split(":00+")[0], "-->",event['summary'])
+            calendar_entries.append(str(str(start).replace('T',' ').split(":00+")[0]+ "-->"+event['summary']))
+    return 'I found total '+str(len(calendar_entries)) +' meetings today. '+ '. and '.join(calendar_entries)
 
 
-if __name__ == '__main__':
-    # main()
-    args = sys.argv
-    if len(args) > 1:
-        if str(args[1]).lower()=='today':
-            main(True)
-        else:
-            main()
-    else:
-        main()
+
