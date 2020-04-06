@@ -54,7 +54,7 @@ def main(today = False):
             return "No upcoming events found."
         
         for event in events:
-            start = event['start'].get('dateTime', event['start'].get('date'))
+            start = event['start'].get('dateTime', event['start'].get('date')).encode('utf-8')
             # print (str(start).split('T')[0],datetime.datetime.now().strftime("%Y-%m-%d"))
             if today:
                 if str(start).split('T')[0] == str(datetime.datetime.now().strftime("%Y-%m-%d")):
