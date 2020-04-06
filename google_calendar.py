@@ -15,52 +15,57 @@ def main(today = False):
     Prints the start and name of the next 10 events on the user's calendar.
     """
     creds = None
-    # The file token.pickle stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.pickle'):
-        with open('token.pickle', 'rb') as token:
-            creds = pickle.load(token)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.pickle', 'wb') as token:
-            pickle.dump(creds, token)
-
-    service = build('calendar', 'v3', credentials=creds)
-
-    # Call the Calendar API
-    now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
-    if today:
-        print ("Getting todays events")
-    else:
-        print('Getting the upcoming 10 events')
-    events_result = service.events().list(calendarId='primary', timeMin=now,
-                                        maxResults=10, singleEvents=True,
-                                        orderBy='startTime').execute()
-    events = events_result.get('items', [])
-
-    if not events:
-        print('No upcoming events found.')
-        return "No upcoming events found."
     calendar_entries = []
-    for event in events:
-        start = event['start'].get('dateTime', event['start'].get('date'))
-        # print (str(start).split('T')[0],datetime.datetime.now().strftime("%Y-%m-%d"))
+    try:
+            
+        # The file token.pickle stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.pickle'):
+            with open('token.pickle', 'rb') as token:
+                creds = pickle.load(token)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.pickle', 'wb') as token:
+                pickle.dump(creds, token)
+
+        service = build('calendar', 'v3', credentials=creds)
+
+        # Call the Calendar API
+        now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
         if today:
-            if str(start).split('T')[0] == str(datetime.datetime.now().strftime("%Y-%m-%d")):
-                event_at = ':'.join(str(start).split('T')[1].split(":")[:2])
-                calendar_entries.append(str(event['summary']).replace(":"," ")+" at "+str(event_at))
+            print ("Getting todays events")
         else:
-            print(str(start).replace('T',' ').split(":00+")[0], "-->",event['summary'])
-            calendar_entries.append(str(str(start).replace('T',' ').split(":00+")[0]+ "-->"+event['summary']))
-    return 'I found total '+str(len(calendar_entries)) +' meetings today. '+ '. and '.join(calendar_entries)
+            print('Getting the upcoming 10 events')
+        events_result = service.events().list(calendarId='primary', timeMin=now,
+                                            maxResults=10, singleEvents=True,
+                                            orderBy='startTime').execute()
+        events = events_result.get('items', [])
+
+        if not events:
+            print('No upcoming events found.')
+            return "No upcoming events found."
+        
+        for event in events:
+            start = event['start'].get('dateTime', event['start'].get('date'))
+            # print (str(start).split('T')[0],datetime.datetime.now().strftime("%Y-%m-%d"))
+            if today:
+                if str(start).split('T')[0] == str(datetime.datetime.now().strftime("%Y-%m-%d")):
+                    event_at = ':'.join(str(start).split('T')[1].split(":")[:2])
+                    calendar_entries.append(str(event['summary']).replace(":"," ")+" at "+str(event_at))
+            else:
+                print(str(start).replace('T',' ').split(":00+")[0], "-->",event['summary'])
+                calendar_entries.append(str(str(start).replace('T',' ').split(":00+")[0]+ "-->"+event['summary']))
+        return 'I found total '+str(len(calendar_entries)) +' meetings today. '+ '. and '.join(calendar_entries)
+    except Exception as err:
+        return str(err)
 
 
 
