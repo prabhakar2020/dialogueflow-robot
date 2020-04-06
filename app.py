@@ -107,6 +107,7 @@ def processRequest(req):
                     speech = responses.get(str(entity),"ok").replace("<<respect>>",str(get_respect()).title())
                 break
 
+
     # text = query_response.get('queryText',None)
     # parameters = query_response.get('parameters',None)
     # res = get_data()
